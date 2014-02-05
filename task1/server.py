@@ -14,21 +14,23 @@ while True:
 	try: 
 		message = connectionSocket.recv(1024)
 
+		if not message:
+			connectionSocket.close() 
+			continue
+
 		filename = message.split()[1]
 		f = open(filename[1:]) 
 		outputdata = f.readlines()
-		
+
+		print 'OK'
+		connectionSocket.send('HTTP/1.1 200 OK\n')
+
 		for i in range(0, len(outputdata)): 
 			connectionSocket.send(outputdata[i]) 
 		connectionSocket.close() 
 	except IOError, IndexError: 
-		message = "File not found!"
+		print 'File not found'
+		message = "HTTP/1.1 404 Not Found"
 		connectionSocket.send(message)
 		connectionSocket.close()
-	#Send response message for file not found 
-	#Fill in start 
-	#Fill in end 
-	#Close client socket 
-	#Fill in start 
-	#Fill in end 
 serverSocket.close()
